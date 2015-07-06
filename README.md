@@ -1,7 +1,7 @@
 # kbinference
 A project to extract paths from large-scale knowledge bases. 
 
-The full reverb code can be downloaded from the (Reverb project website)[http://reverb.cs.washington.edu/].
+The full reverb code can be downloaded from the [Reverb project website](http://reverb.cs.washington.edu/).
 
 Relevant Links:
 
