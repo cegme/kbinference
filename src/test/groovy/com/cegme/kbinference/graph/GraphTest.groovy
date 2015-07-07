@@ -30,11 +30,14 @@ public class GraphTest {
 
     @Test
     void testQueries(){
-        def chargerVertexCnt = graph.V('noun', 'the Chargers').count()
+        //def chargerVertexCnt = graph.V('noun', 'the Chargers').count()
+        def chargerVertexCnt = graph.V('noun', 'the chargers').count()
         assertEquals('Able to query by vertex property', 48, chargerVertexCnt)
 
-        def whoGotJoeMontana = graph.V('noun', 'Joe Montana').inE('traded for').outV.noun.next()
-        assertEquals('Able to query & traverse the graph', 'the Chiefs', whoGotJoeMontana)
+        //def whoGotJoeMontana = graph.V('noun', 'Joe Montana').inE('traded for').outV.noun.next()
+        def whoGotJoeMontana = graph.V('noun', 'joe montana').inE('traded for').outV.noun.next()
+        //assertEquals('Able to query & traverse the graph', 'the Chiefs', whoGotJoeMontana)
+        assertEquals('Able to query & traverse the graph', 'the chiefs', whoGotJoeMontana)
     }
 
 

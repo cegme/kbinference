@@ -20,6 +20,7 @@ public class LargeGraphTest {
     @Before
     void setUp() throws Exception {
         graph = ReverbGraph.loadGraph('/reverb_clueweb_tuples-1.1.triples.clean.csv')
+        System.err.println("Graph Loading complete")
     }
 
     @Test
@@ -30,11 +31,14 @@ public class LargeGraphTest {
 
     @Test
     void testQueries(){
-        def chargerVertexCnt = graph.V('noun', 'the Chargers').count()
+        //def chargerVertexCnt = graph.V('noun', 'the Chargers').count()
+        def chargerVertexCnt = graph.V('noun', 'the chargers').count()
         assertEquals('Able to query by vertex property', 137, chargerVertexCnt)
 
-        def whoGotJoeMontana = graph.V('noun', 'Joe Montana').inE('traded for').outV.noun.next()
-        assertEquals('Able to query & traverse the graph', 'the Chiefs', whoGotJoeMontana)
+        //def whoGotJoeMontana = graph.V('noun', 'Joe Montana').inE('traded for').outV.noun.next()
+        def whoGotJoeMontana = graph.V('noun', 'joe montana').inE('traded for').outV.noun.next()
+        //assertEquals('Able to query & traverse the graph', 'the Chiefs', whoGotJoeMontana)
+        assertEquals('Able to query & traverse the graph', 'the chiefs', whoGotJoeMontana)
     }
 
 
