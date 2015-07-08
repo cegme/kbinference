@@ -87,7 +87,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <argLine>-Xmx8G</argLine>
+                    <argLine>-Xmx10G</argLine>
+                    <argLine>-Xms10G</argLine>
                 </configuration>
             </plugin>
         </plugins>

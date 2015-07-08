@@ -39,24 +39,29 @@ class GraphService {
         reader.withCloseable {
             String[] arr
             long counter = 0
+            long id 
+            String nounA 
+            String verb
+            String nounB
             while ((arr = reader.readNext()) != null) {
                 try {
-                    long id = arr[0].toLong()
-                    String nounA = arr[1].toLowerCase()
-                    String verb = arr[2].toLowerCase()
-                    String nounB = arr[3].toLowerCase()
+                    id = arr[0].toLong()
+                    //nounA = arr[1]
+                    //verb = arr[2]
+                    //nounB = arr[3]
 
                     if ((!arr[1].matches(".*\\d+.*") && !arr[2].matches(".*\\d+.*") && !arr[3].matches(".*\\d+.*"))
-                                && (!nounA.equals("label") && !verb.equals("label") && !nounB.equals("label"))
-                                && (!nounA.equals("id") && !verb.equals("id") && !nounB.equals("id"))){
+                                && (!arr[1].equalsIgnoreCase("label") && !arr[2].equalsIgnoreCase("label") && !arr[3].equalsIgnoreCase("label"))
+                                && (!arr[1].equalsIgnoreCase("id") && !arr[2].equalsIgnoreCase("id") && !arr[3].equalsIgnoreCase("id"))){
+
                         def v1 = graph.addVertex(null)
-                        v1.setProperty('noun', nounA)
+                        v1.setProperty('noun', arr[1])
 
                         def v2 = graph.addVertex(null)
-                        v2.setProperty('noun', nounB)
+                        v2.setProperty('noun', arr[3])
 
                         //graph.addEdge(null, v1, v2, verb) // Save space, no id
-                        graph.addEdge(id, v1, v2, verb)
+                        graph.addEdge(id, v1, v2, arr[2])
                         counter++
 
                         if (counter % 100_000 == 0L) {
