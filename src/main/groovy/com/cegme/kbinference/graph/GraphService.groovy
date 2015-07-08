@@ -40,7 +40,8 @@ class GraphService {
                     String verb = arr[2].toLowerCase()
                     String nounB = arr[3].toLowerCase()
 
-                    if (!arr[1].matches(".*\\d+.*") && !arr[2].matches(".*\\d+.*") && !arr[3].matches(".*\\d+.*")) {
+                    if ((!arr[1].matches(".*\\d+.*") && !arr[2].matches(".*\\d+.*") && !arr[3].matches(".*\\d+.*"))
+                                && (!nounA.equals("id") && !verb.equals("id") && !nounB.equals("id"))){
                         def v1 = graph.addVertex(null)
                         v1.setProperty('noun', nounA)
 
