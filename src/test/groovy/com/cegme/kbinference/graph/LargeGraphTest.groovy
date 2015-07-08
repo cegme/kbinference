@@ -31,6 +31,9 @@ public class LargeGraphTest {
         BaseConfiguration conf = new BaseConfiguration()
         conf.setProperty("storage.directory", path);
         conf.setProperty("storage.backend", "persistit");
+        conf.setProperty("storage.transactions","false")
+        conf.setProperty("storage.buffer-size", "1073741824") // 1G
+        conf.setProperty("buffer.count.16384", "50000");
         graph = TitanFactory.open(conf)
         GraphService.populateGraph(graph, '/reverb_clueweb_tuples-1.1.triples.clean.csv')
     }
