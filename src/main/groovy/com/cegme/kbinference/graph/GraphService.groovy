@@ -5,6 +5,9 @@ import com.thinkaurelius.titan.core.TitanFactory
 import com.thinkaurelius.titan.core.TitanGraph
 import com.tinkerpop.blueprints.Graph
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.time.StopWatch
+
+import java.util.concurrent.TimeUnit
 
 @Slf4j
 class GraphService {
@@ -27,6 +30,9 @@ class GraphService {
      * @param resourcePath relative path to a csv file
      */
     static void populateGraph(Graph graph, String resourcePath) {
+        StopWatch watch = new StopWatch()
+        watch.start()
+
         def stream = GraphService.class.getResourceAsStream(resourcePath)
         def isr = new InputStreamReader(stream)
         CSVReader reader = new CSVReader(isr)
@@ -52,7 +58,8 @@ class GraphService {
                         counter++
 
                         if (counter % 100_000 == 0L) {
-                            println String.format("Added %,d nodes", counter)
+                            def durationMins = TimeUnit.MINUTES.convert(watch.time, TimeUnit.MILLISECONDS)
+                            println String.format("Added %,d nodes in %s mins", counter, durationMins)
                         }
                     }
                     else {

@@ -1,8 +1,11 @@
 package com.cegme.kbinference.graph
 
 import com.thinkaurelius.titan.core.TitanFactory
+import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration
 import com.tinkerpop.blueprints.Graph
 import com.tinkerpop.gremlin.groovy.Gremlin
+import org.apache.commons.configuration.BaseConfiguration
+import org.apache.commons.configuration.Configuration
 import org.apache.commons.io.FileUtils
 import org.junit.BeforeClass
 import org.junit.Test
@@ -25,7 +28,10 @@ public class LargeGraphTest {
             FileUtils.cleanDirectory(graphDir)
         }
 
-        graph = TitanFactory.open(path)
+        BaseConfiguration conf = new BaseConfiguration()
+        conf.setProperty("storage.directory", path);
+        conf.setProperty("storage.backend", "persistit");
+        graph = TitanFactory.open(conf)
         GraphService.populateGraph(graph, '/reverb_clueweb_tuples-1.1.triples.clean.csv')
     }
 
