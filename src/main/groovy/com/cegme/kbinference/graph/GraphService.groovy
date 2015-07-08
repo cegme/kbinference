@@ -48,7 +48,7 @@ class GraphService {
                     String verb = arr[2].toLowerCase()
                     String nounB = arr[3].toLowerCase()
 
-                    def containsInvalidData = [].any {
+                    def containsInvalidData = [nounA, nounB, verb].any {
                         it.matches(".*\\d+.*")  || reservedWords.contains(it)
                     }
 
