@@ -39,16 +39,20 @@ class GraphService {
         reader.withCloseable {
             String[] arr
             long counter = 0
+            final Set<String> reservedWords = ['id', 'label']
             while ((arr = reader.readNext()) != null) {
+                def lineTxt = Arrays.toString(arr)
                 try {
                     long id = arr[0].toLong()
                     String nounA = arr[1].toLowerCase()
                     String verb = arr[2].toLowerCase()
                     String nounB = arr[3].toLowerCase()
 
-                    if ((!arr[1].matches(".*\\d+.*") && !arr[2].matches(".*\\d+.*") && !arr[3].matches(".*\\d+.*"))
-                                && (!nounA.equals("label") && !verb.equals("label") && !nounB.equals("label"))
-                                && (!nounA.equals("id") && !verb.equals("id") && !nounB.equals("id"))){
+                    def containsInvalidData = [].any {
+                        it.matches(".*\\d+.*")  || reservedWords.contains(it)
+                    }
+
+                    if (!containsInvalidData){
                         def v1 = graph.addVertex(null)
                         v1.setProperty('noun', nounA)
 
@@ -65,10 +69,10 @@ class GraphService {
                         }
                     }
                     else {
-                        log.error(">> ${Arrays.toString(arr)}")
+                        log.warn(">> " + "$lineTxt")
                     }
                 } catch (Exception e) {
-                    log.error("Error adding triple: ${Arrays.toString(arr)}", e)
+                    log.error("Error adding triple: $lineTxt", e)
                 }
             }
         }
