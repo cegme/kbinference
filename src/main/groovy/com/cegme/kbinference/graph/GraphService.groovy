@@ -59,7 +59,7 @@ class GraphService {
                         log.error(">> ${Arrays.toString(arr)}")
                     }
                 } catch (Exception e) {
-                    log.error('Error adding triple', e)
+                    log.error("Error adding triple: ${Arrays.toString(arr)}", e)
                 }
             }
         }
