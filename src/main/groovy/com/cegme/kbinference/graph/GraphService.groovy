@@ -2,7 +2,7 @@ package com.cegme.kbinference.graph
 
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph
 
-class ReverbGraph {
+class GraphService {
     static void main(def args) {
         def graph = loadGraph('/data.csv')
         //some code here
@@ -11,7 +11,7 @@ class ReverbGraph {
     static TinkerGraph loadGraph(String resourcePath) {
         TinkerGraph graph = new TinkerGraph()
 
-        def dataStr = ReverbGraph.class.getResourceAsStream(resourcePath).text
+        def dataStr = GraphService.class.getResourceAsStream(resourcePath).text
         dataStr.eachLine {
 
             long counter = 0

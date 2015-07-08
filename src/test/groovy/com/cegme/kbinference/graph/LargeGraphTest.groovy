@@ -19,7 +19,7 @@ public class LargeGraphTest {
 
     @Before
     void setUp() throws Exception {
-        graph = ReverbGraph.loadGraph('/reverb_clueweb_tuples-1.1.triples.clean.csv')
+        graph = GraphService.loadGraph('/reverb_clueweb_tuples-1.1.triples.clean.csv')
         System.err.println("Graph Loading complete")
     }
 

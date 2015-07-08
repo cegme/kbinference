@@ -19,7 +19,7 @@ public class GraphTest {
 
     @Before
     void setUp() throws Exception {
-        graph = ReverbGraph.loadGraph('/test-reverb-triples.csv')
+        graph = GraphService.loadGraph('/test-reverb-triples.csv')
     }
 
     @Test
