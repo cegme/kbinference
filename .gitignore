@@ -8,3 +8,5 @@ dependency-reduced-pom.xml
 buildNumber.properties
 /.idea
 *.iml
+/data/graph
+/src/test/resources/reverb_clueweb_tuples-1.1.triples.clean.csv

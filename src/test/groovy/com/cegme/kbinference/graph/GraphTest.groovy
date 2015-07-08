@@ -1,25 +1,33 @@
 package com.cegme.kbinference.graph
 
-import com.tinkerpop.blueprints.impls.tg.TinkerGraph
+import com.thinkaurelius.titan.core.TitanFactory
+import com.tinkerpop.blueprints.Graph
 import com.tinkerpop.gremlin.groovy.Gremlin
-import org.junit.After
-import org.junit.Before
+import org.apache.commons.io.FileUtils
+import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 
 public class GraphTest {
-    TinkerGraph graph
+    private static Properties props = new Properties()
+    static Graph graph
 
     @BeforeClass
-    static void beforeClass(){
+    static void initDb(){
         Gremlin.load()
-    }
 
-    @Before
-    void setUp() throws Exception {
-        graph = GraphService.loadGraph('/test-reverb-triples.csv')
+        props.load(GraphTest.class.getResourceAsStream('/test.properties'))
+        def path = props.getProperty('graphdb.path')
+
+        def graphDir = new File(path)
+        if(graphDir.exists()){
+            FileUtils.cleanDirectory(graphDir)
+        }
+
+        graph = TitanFactory.open(path)
+        GraphService.populateGraph(graph, '/test-reverb-triples.csv')
     }
 
     @Test
@@ -30,19 +38,16 @@ public class GraphTest {
 
     @Test
     void testQueries(){
-        //def chargerVertexCnt = graph.V('noun', 'the Chargers').count()
         def chargerVertexCnt = graph.V('noun', 'the chargers').count()
         assertEquals('Able to query by vertex property', 48, chargerVertexCnt)
 
-        //def whoGotJoeMontana = graph.V('noun', 'Joe Montana').inE('traded for').outV.noun.next()
         def whoGotJoeMontana = graph.V('noun', 'joe montana').inE('traded for').outV.noun.next()
-        //assertEquals('Able to query & traverse the graph', 'the Chiefs', whoGotJoeMontana)
         assertEquals('Able to query & traverse the graph', 'the chiefs', whoGotJoeMontana)
     }
 
 
-    @After
-    void tearDown() throws Exception {
+    @AfterClass
+    static void afterClazz() throws Exception {
         graph.shutdown()
     }
 }
