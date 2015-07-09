@@ -4,12 +4,14 @@ import com.opencsv.CSVReader
 import com.thinkaurelius.titan.core.TitanFactory
 import com.thinkaurelius.titan.core.TitanGraph
 import com.tinkerpop.blueprints.Graph
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.time.StopWatch
 
 import java.util.concurrent.TimeUnit
 
 @Slf4j
+@CompileStatic
 class GraphService {
     static Properties props = new Properties()
     static TitanGraph graph
