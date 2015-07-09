@@ -41,7 +41,6 @@ class GraphService {
             long counter = 0
             final Set<String> reservedWords = ['id', 'label']
             while ((arr = reader.readNext()) != null) {
-                //def lineTxt = Arrays.toString(arr)
                 try {
 
                     def containsInvalidData = [arr[1], arr[2], arr[3]].any {
@@ -49,15 +48,14 @@ class GraphService {
                     }
 
                     if (!containsInvalidData){
-                        /*def v1 = graph.addVertex(null)
+                        def v1 = graph.addVertex(null)
                         v1.setProperty('noun', arr[1])
 
                         def v2 = graph.addVertex(null)
                         v2.setProperty('noun', arr[3])
 
                         graph.addEdge(arr[0].toLong(), v1, v2, arr[2])
-                        */
-                        graph.addEdge(arr[0].toLong(), graph.addVertex(arr[1]), graph.addVertex(arr[3]), arr[2])
+                        
                         counter++
 
                         if (counter % 100_000 == 0L) {
