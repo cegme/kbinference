@@ -39,29 +39,23 @@ class GraphService {
         reader.withCloseable {
             String[] arr
             long counter = 0
-            long id 
-            String nounA 
-            String verb
-            String nounB
+            final Set<String> reservedWords = ['id', 'label']
             while ((arr = reader.readNext()) != null) {
+                def lineTxt = Arrays.toString(arr)
                 try {
-                    id = arr[0].toLong()
-                    //nounA = arr[1]
-                    //verb = arr[2]
-                    //nounB = arr[3]
 
-                    if ((!arr[1].matches(".*\\d+.*") && !arr[2].matches(".*\\d+.*") && !arr[3].matches(".*\\d+.*"))
-                                && (!arr[1].equalsIgnoreCase("label") && !arr[2].equalsIgnoreCase("label") && !arr[3].equalsIgnoreCase("label"))
-                                && (!arr[1].equalsIgnoreCase("id") && !arr[2].equalsIgnoreCase("id") && !arr[3].equalsIgnoreCase("id"))){
+                    def containsInvalidData = [arr[1], arr[2], arr[3]].any {
+                        it.matches(".*\\d+.*")  || reservedWords.contains(it)
+                    }
 
+                    if (!containsInvalidData){
                         def v1 = graph.addVertex(null)
                         v1.setProperty('noun', arr[1])
 
                         def v2 = graph.addVertex(null)
                         v2.setProperty('noun', arr[3])
 
-                        //graph.addEdge(null, v1, v2, verb) // Save space, no id
-                        graph.addEdge(id, v1, v2, arr[2])
+                        graph.addEdge(arr[0].toLong(), v1, v2, arr[2])
                         counter++
 
                         if (counter % 100_000 == 0L) {
@@ -70,10 +64,10 @@ class GraphService {
                         }
                     }
                     else {
-                        log.error(">> ${Arrays.toString(arr)}")
+                        log.warn(">> " + "$lineTxt")
                     }
                 } catch (Exception e) {
-                    log.error("Error adding triple: ${Arrays.toString(arr)}", e)
+                    log.error("Error adding triple: $lineTxt", e)
                 }
             }
         }
