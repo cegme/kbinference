@@ -41,7 +41,7 @@ class GraphService {
         reader.withCloseable {
             String[] arr
             long counter = 0
-            final Set<String> reservedWords = ['id', 'label']
+            final List<String> reservedWords = ['id', 'label']
             while ((arr = reader.readNext()) != null) {
                 try {
 
@@ -69,7 +69,6 @@ class GraphService {
                         log.warn("Invalid Data: ${Arrays.toString(arr)}")
                     }
                 } catch (Exception e) {
-                    //log.error("Error adding triple: $lineTxt", e)
                     log.error("Error adding triple: ${Arrays.toString(arr)}", e)
                 }
             }
