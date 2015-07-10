@@ -1,11 +1,12 @@
 package com.cegme.kbinference.graph
 
 import com.thinkaurelius.titan.core.TitanFactory
-import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration
+import com.thinkaurelius.titan.core.TitanGraph
 import com.tinkerpop.blueprints.Graph
+import com.tinkerpop.blueprints.TransactionalGraph
+import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.gremlin.groovy.Gremlin
 import org.apache.commons.configuration.BaseConfiguration
-import org.apache.commons.configuration.Configuration
 import org.apache.commons.io.FileUtils
 import org.junit.BeforeClass
 import org.junit.Test
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals
 
 public class LargeGraphTest {
     private static Properties props = new Properties()
-    static Graph graph
+    static TransactionalGraph graph
 
     @BeforeClass
     static void initDb(){
@@ -29,12 +30,17 @@ public class LargeGraphTest {
         }
 
         BaseConfiguration conf = new BaseConfiguration()
+        //conf.setProperty("storage.batch-loading", true);
+        //conf.setProperty("autotype", "none");
         conf.setProperty("storage.directory", path);
         conf.setProperty("storage.backend", "persistit");
         conf.setProperty("storage.transactions","false")
         //conf.setProperty("storage.buffer-size", "1073741824") // 1G
         //conf.setProperty("buffer.count.16384", "50000");
         graph = TitanFactory.open(conf)
+        graph.makeKey("noun").dataType(String).indexed(Vertex).make()
+        graph.commit()
+
         GraphService.populateGraph(graph, '/reverb_clueweb_tuples-1.1.triples.clean.csv')
     }
 

@@ -3,7 +3,9 @@ package com.cegme.kbinference.graph
 import com.opencsv.CSVReader
 import com.thinkaurelius.titan.core.TitanFactory
 import com.thinkaurelius.titan.core.TitanGraph
-import com.tinkerpop.blueprints.Graph
+import com.tinkerpop.blueprints.TransactionalGraph
+import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph
+import com.tinkerpop.blueprints.util.wrappers.batch.VertexIDType
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.time.StopWatch
@@ -31,42 +33,55 @@ class GraphService {
      * @param graph graph to populate
      * @param resourcePath relative path to a csv file
      */
-    static void populateGraph(Graph graph, String resourcePath) {
+    static void populateGraph(TransactionalGraph graph, String resourcePath) {
         StopWatch watch = new StopWatch()
         watch.start()
 
-        def stream = GraphService.class.getResourceAsStream(resourcePath)
-        def isr = new InputStreamReader(stream)
-        CSVReader reader = new CSVReader(isr)
-        reader.withCloseable {
-            String[] arr
-            long counter = 0
-            final List<String> reservedWords = ['id', 'label']
-            while ((arr = reader.readNext()) != null) {
-                try {
+        BatchGraph bg = new BatchGraph(graph, VertexIDType.STRING, 300_000)
+        TitanGraph tg = bg.baseGraph as TitanGraph
+        bg.setVertexIdKey('noun')
+        def reservedWords = ['id', 'label'] as Set<String>
 
-                    def containsInvalidData = [arr[1], arr[2], arr[3]].any {
-                        it.matches(".*\\d+.*")  || reservedWords.contains(it)
+        def isr = new InputStreamReader(GraphService.class.getResourceAsStream(resourcePath))
+        new CSVReader(isr).withCloseable {
+            long counter = 0
+            String[] arr
+            def id
+            def noun1
+            def verb
+            def noun2
+            while ((arr = it.readNext()) != null) {
+                try {
+                    id = arr[0].toLong()
+                    noun1 = arr[1]
+                    verb = arr[2]
+                    noun2 = arr[3]
+
+                    def containsInvalidData = [noun1, verb, noun2].any { String val ->
+                        val.matches(".*\\d+.*")  || reservedWords.contains(val.toLowerCase())
                     }
 
                     if (!containsInvalidData){
-                        def v1 = graph.addVertex(null)
-                        v1.setProperty('noun', arr[1])
+/*
+                        //with batch loading
+                        def type = tg.getType(verb)
+                        if(!type){
+                            tg.makeLabel(verb).make()
+                        }
+*/
 
-                        def v2 = graph.addVertex(null)
-                        v2.setProperty('noun', arr[3])
+                        def v1 = bg.getVertex(noun1) ?: bg.addVertex(noun1)
+                        def v2 = bg.getVertex(noun2) ?: bg.addVertex(noun2)
+                        bg.addEdge(id, v1, v2, verb)
 
-                        graph.addEdge(arr[0].toLong(), v1, v2, arr[2])
-                        
                         counter++
-
                         if (counter % 100_000 == 0L) {
                             def durationMins = TimeUnit.MINUTES.convert(watch.time, TimeUnit.MILLISECONDS)
                             println String.format("Added %,d nodes in %s mins", counter, durationMins)
                         }
                     }
                     else {
-                        log.warn("Invalid Data: ${Arrays.toString(arr)}")
+                        //log.warn("Invalid Data: ${Arrays.toString(arr)}")
                     }
                 } catch (Exception e) {
                     log.error("Error adding triple: ${Arrays.toString(arr)}", e)

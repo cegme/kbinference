@@ -1,7 +1,7 @@
 package com.cegme.kbinference.graph
 
 import com.thinkaurelius.titan.core.TitanFactory
-import com.tinkerpop.blueprints.Graph
+import com.tinkerpop.blueprints.TransactionalGraph
 import com.tinkerpop.gremlin.groovy.Gremlin
 import org.apache.commons.io.FileUtils
 import org.junit.AfterClass
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals
 
 public class GraphTest {
     private static Properties props = new Properties()
-    static Graph graph
+    static TransactionalGraph graph
 
     @BeforeClass
     static void initDb(){
