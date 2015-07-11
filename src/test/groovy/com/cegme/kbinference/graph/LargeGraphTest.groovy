@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.gremlin.groovy.Gremlin
 import org.apache.commons.configuration.BaseConfiguration
 import org.apache.commons.io.FileUtils
+import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -19,13 +20,20 @@ public class LargeGraphTest {
 
     @BeforeClass
     static void initDb(){
+       
+
+        Scanner userInput = new Scanner(System.in)
+        System.out.print("Do you want to load a new graph (y/n)?\n>> ")
+        char c = userInput.nextChar().toLowerCase()
+
         Gremlin.load()
 
         props.load(GraphTest.class.getResourceAsStream('/test.properties'))
         def path = props.getProperty('graphdb.path')
 
         def graphDir = new File(path)
-        if(graphDir.exists()){
+        if(graphDir.exists() && c == 'y'){
+            //log.debug("Cleaning the graph directory ${path}")
             FileUtils.cleanDirectory(graphDir)
         }
 
@@ -38,16 +46,19 @@ public class LargeGraphTest {
         //conf.setProperty("storage.buffer-size", "1073741824") // 1G
         //conf.setProperty("buffer.count.16384", "50000");
         graph = TitanFactory.open(conf)
-        graph.makeKey("noun").dataType(String).indexed(Vertex).make()
-        graph.commit()
 
-        GraphService.populateGraph(graph, '/reverb_clueweb_tuples-1.1.triples.clean.csv')
+        if (c == 'y') {
+            //log.info("Populating the graph.")
+            graph.makeKey("noun").dataType(String).indexed(Vertex).make()
+            graph.commit()
+            GraphService.populateGraph(graph, '/reverb_clueweb_tuples-1.1.triples.clean.csv')
+        }
     }
 
     @Test
     void testGraphLoaded(){
         def vertexCnt = graph.vertices.size()
-        assertEquals('All vertices were loaded', 2220591, vertexCnt)
+        assertEquals('All vertices were loaded', 2220582, vertexCnt)
     }
 
     @Test
@@ -57,5 +68,10 @@ public class LargeGraphTest {
 
         def whoGotJoeMontana = graph.V('noun', 'joe montana').inE('traded for').outV.noun.next()
         assertEquals('Able to query & traverse the graph', 'the chiefs', whoGotJoeMontana)
+    }
+
+    @AfterClass
+    static void afterClazz() throws Exception {
+        graph.shutdown()
     }
 }
