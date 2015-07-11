@@ -16,7 +16,7 @@ RUN apt-get -y update &&\
 
 RUN apt-get -y install groovy maven git wget curl htop vim emacs python scala software-properties-common 
 
-RUN apt-get -y install libboost-all-dev libboost-dev libboost-dbg libopenblas-dev liblapack-dev libarpack2-dev libarpack2-dbg libarpack+++2-dev libarmadillo-dev libeigen2-dev libstdc++-4.9-dev libstdc++-4.9-doc g++ gcc sqlite3 libkrb5-dev
+RUN apt-get -y install libboost-all-dev libboost-dev libboost-dbg libopenblas-dev liblapack-dev libarpack2-dev libarpack2-dbg libarpack+++2-dev libarmadillo-dev libeigen2-dev libstdc++-4.9-dev libstdc++-4.9-doc g++-4.9 gcc-4.9 sqlite3 libkrb5-dev
 
 RUN apt-get -y install postgresql-9.4 pgadmin4 postgresql-client-9.4 postgresql-contrib-9.4 postgresql-server-dev-9.4 libpq-dev postgresql-plpython-9.4 python-software-properties postgresql-plpython-9.4 postgresql-hll postgresql-comparator postgresql-pllua  postgresql-9.4-dbg
 
