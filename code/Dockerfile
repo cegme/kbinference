@@ -18,16 +18,29 @@ RUN apt-get -y install groovy maven git wget curl htop vim emacs python scala so
 
 RUN apt-get -y install libboost-all-dev libboost-dev libboost-dbg libopenblas-dev liblapack-dev libarpack2-dev libarpack2-dbg libarpack+++2-dev libarmadillo-dev libeigen2-dev g++ gcc sqlite3 libkrb5-dev
 
-RUN apt-get -y install postgresql-9.4 pgadmin4 postgresql-client-9.4 postgresql-contrib-9.4 postgresql-server-dev-9.4 libpq-dev postgresql-plpython-9.4 python-software-properties postgresql-plpython-9.4 postgresql-hll postgresql-comparator postgresql-pllua  postgresql-9.4-dbg
+
+
+# Need to edit files to get the new postgresql
+RUN touch /etc/apt/sources.list.d/pgdg.list &&\
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" >> etc/apt/sources.list.d/pgdg.list  &&\
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - &&\
+    sudo apt-get update &&\
+    sudo apt-get dist-upgrade
+	
+
+RUN apt-get -y install postgresql-client-9.4 postgresql-contrib-9.4 postgresql-server-dev-9.4 libpq-dev postgresql-plpython-9.4 python-software-properties postgresql-hll postgresql-9.4-dbg build-essential postgresql-9.4-dbg postgresql-9.4-pgmp postgresql-contrib-9.4 postgresql-9.4-preprepare
+
+RUN mkdir /data/ && chmod 777 /data
 
 # Create the database
 USER postgres
 
 RUN /etc/init.d/postgresql start &&\
   createdb -T template0 -O postgres cubismfacts &&\
+  createuser -s -w -e cgrant &&\
   mkdir -p /data/ && cd data &&\
   wget http://www.cise.ufl.edu/~cgrant/data/cubismfacts.sql.gz &&\
-  gunzip -c cubismfacts.sql.gz | psql cubismfacts
+  gunzip -c cubismfacts.sql.gz | psql -U postgres cubismfacts
 
 # EXTREMELY unsafe hack for easy DB access
 RUN sed -i 's/peer/trust/' /etc/postgresql/9.4/main/pg_hba.conf
