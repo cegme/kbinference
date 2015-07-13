@@ -127,6 +127,24 @@ public class InferenceTest {
       true
     }
 
+    @Test
+    void testKHopPath () {
+      def K = 2
+      def khopVertices = graph.V('noun', 'Fox News')
+                                .outE  // Get the incoming and out going edges
+                                .inV
+                                .loop(K){it.loops < K}
+                                //.filter(noun == "pot")
+                                //.noun
+                                .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"}
+
+      khopVertices.each {
+        System.err.println(">3> ${it}")
+      }
+      true
+    }
+
+
     @AfterClass
     static void afterClazz() throws Exception {
         graph.shutdown()
