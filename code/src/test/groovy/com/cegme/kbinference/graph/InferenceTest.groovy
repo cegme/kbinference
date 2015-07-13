@@ -57,7 +57,7 @@ public class InferenceTest {
 
     @Test 
     void testVertexSearchQuery () { 
-      /*def startnodeVertices = graph.V('noun', 'Fox News').next()
+      def startnodeVertices = graph.V('noun', 'Fox News').next()
 
       def inCnt = 0
       def outCnt = 0
@@ -74,7 +74,7 @@ public class InferenceTest {
       assertNotNull("We have start nodes", startnodeVertices as Object)
       assertNotNull("We have outE", outCnt as Object)
       assertNotNull("We have inE", inCnt as Object)
-    */}
+    }
 
     @Test
     void testOneHopPath () {
@@ -88,8 +88,8 @@ public class InferenceTest {
                                 .outE
                                 .inV
                                 //.filter(noun == "pot")
-                                .noun
-                                .path
+                                //.noun
+                                .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"}
       onehopVertices.each {
         System.err.println(">1> ${it}")
       }
@@ -119,8 +119,7 @@ public class InferenceTest {
                                 .random(0.2)
                                 .inV
                                 .filter{it.noun=='Obama'}
-                                .noun
-                                .path
+                                .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"}
 
       twohopVertices.each {
         System.err.println(">2> ${it}")
