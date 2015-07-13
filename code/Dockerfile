@@ -48,13 +48,22 @@ RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.4/main/pg_hba.co
 
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.4/main/postgresql.conf
 
+USER root
+
 RUN mkdir -p /home/dsr/ && cd /home/dsr &&\
-  git clone https://github.com/cegme/kbinegrate.git &&\
-  cd /home/dsr/kbintegrate/code/src/test/resources/ &&\
+  chmod 777 /home/dsr/ &&\
+  git clone https://github.com/cegme/kbinference.git &&\
+  cd /home/dsr/kbinference/code/src/test/resources/ &&\
   wget -O - http://www.cise.ufl.edu/~cgrant/data/reverb_clueweb_tuples-1.1.triples.clean.csv.gz | gunzip -c > reverb_clueweb_tuples-1.1.triples.clean.csv
 
-RUN /etc/init.d/postgresql start &&\
-  psql --command "ALTER USER postgres WITH SUPERUSER PASSWORD 'mypass';" 
+#USER postgres
+ 
+#RUN /etc/init.d/postgresql start &&\
+#  psql --command "ALTER USER postgres WITH SUPERUSER PASSWORD 'mypass';" 
+
+USER root
+
+CMD /etc/init.d/postgresql start && cd /home/dsr/ && /bin/bash
 
 
 
