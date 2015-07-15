@@ -45,7 +45,6 @@ public class GraphTest {
         assertEquals('Able to query & traverse the graph', 'the chiefs', whoGotJoeMontana)
     }
 
-
     @AfterClass
     static void afterClazz() throws Exception {
         graph.shutdown()

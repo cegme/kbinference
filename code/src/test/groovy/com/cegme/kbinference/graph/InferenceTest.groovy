@@ -1,6 +1,8 @@
 
 package com.cegme.kbinference.graph
 
+import com.google.common.collect.Maps;
+
 import com.thinkaurelius.titan.core.TitanFactory
 import com.thinkaurelius.titan.core.TitanGraph
 import com.tinkerpop.blueprints.Graph
@@ -18,6 +20,7 @@ import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertTrue
 
 @Slf4j
 public class InferenceTest {
@@ -129,7 +132,7 @@ public class InferenceTest {
 
     @Test
     void testKHopPath () {
-      def K = 2
+      def K = 3
       def khopVertices = graph.V('noun', 'Fox News')
                                 .outE  // Get the incoming and out going edges
                                 .inV
@@ -144,9 +147,39 @@ public class InferenceTest {
       true
     }
 
+    @Test
+    void testSerialization () {
+      
+        props.load(GraphTest.class.getResourceAsStream('/test.properties'))
+
+         // Test Edges
+        def edgefile = props.getProperty('edgemap.file')
+        def edgemap = GraphService.relationHistogram(graph)
+        GraphService.serializeCompressedMap(edgemap,edgefile) 
+
+        def edgemap2 = GraphService.deserializeCompressedMap(edgefile)
+
+        // Thanks google guava
+        assertTrue("Are edges counted and serialized correctly ", Maps.difference(edgemap, edgemap2).areEqual())
+        assertEquals("Is the extracted edge count equal ", edgemap.get("Obama"), edgemap2.get("Obama"))
+ 
+        // Test Vertices
+        def vertexfile = props.getProperty('vertexmap.file')
+        def vertexmap = GraphService.entityHistogram(graph)
+        GraphService.serializeCompressedMap(vertexmap,vertexfile) 
+
+        def vertexmap2 = GraphService.deserializeCompressedMap(vertexfile)
+
+        // Thanks google guava
+        assertTrue("Are Vertices counted and serialized correctly ", Maps.difference(vertexmap, vertexmap2).areEqual())
+        assertEquals("Is the extracted vertex count equal ", vertexmap.get("Obama"), vertexmap2.get("Obama"))
+        
+              
+    }
+
 
     @AfterClass
-    static void afterClazz() throws Exception {
+    static void afterClass() throws Exception {
         graph.shutdown()
     }
 }
