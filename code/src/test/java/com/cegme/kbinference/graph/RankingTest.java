@@ -1,12 +1,9 @@
 
-
 package com.cegme.kbinference.graph;
 
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.cegme.kbinference.graph.Ranking;
 import com.cegme.kbinference.graph.GraphService;
-
-//import java.util.logging.Slf4j;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +13,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 
 @Slf4j
 public class RankingTest {

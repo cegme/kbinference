@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class Ranking {
   
    /**
-    * Coun the number of capical letters in the path and return the count.
+    * Count the number of capical letters in the path and return the count.
     * We want to know the number of capical letters because that correlates with the number of entities mentioned.
     */
   public static double capitalLetters (final String path) {
