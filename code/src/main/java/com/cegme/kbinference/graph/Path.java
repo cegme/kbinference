@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Path {
 
   public ArrayList<PathNode> path;
-  public double conf;
+  private double conf;
 
   public Path() {
     this(new ArrayList<PathNode>(), 0.0);
@@ -33,7 +33,7 @@ public class Path {
       //Collections.copy(this.path, path);
       this.path = new ArrayList<PathNode>(path);
     }
-    this.conf = conf;
+    setConf(conf);
   }
 
   public void addPathNode(String term, String id, boolean edge) {
@@ -46,6 +46,10 @@ public class Path {
 
   public int size () {
     return path.size();
+  }
+
+  public void setConf(double conf) {
+    this.conf = Math.min(1.0,conf);
   }
 
   public String toString () {
@@ -87,13 +91,12 @@ public class Path {
       path.addPathNode(m.group(1), m.group(2), isEdge);
       isEdge ^= true;
     }
-    path.conf = conf;
+    path.setConf(conf);
 
     return path;
   }
 
   public static Path buildPath(String text, double conf) {
-    log.info("buildPath " + text);
     Path path = new Path();
     StringBuilder sb = new StringBuilder();
 
@@ -119,18 +122,15 @@ public class Path {
         id = sb.toString();
         sb.setLength(0); // Reset buffer
         path.addPathNode(term, id, isEdge);
-        log.info("PathNode: " + term + ":" + id + "--" + isEdge);
         isEdge ^= true;
       }
     }
 
     // Add the leffover if
     path.addPathNode(term, sb.toString(), isEdge);
-    log.info("PathNode: " + term + ":" + sb.toString() + "--" + isEdge);
-    path.conf = conf;
+    path.setConf(conf);
 
     return path; 
-
   }
 
   public static Sankey toSankey(ArrayList<Path> paths) {
@@ -148,12 +148,8 @@ public class Path {
       }
     }
 
-    for (Path p : paths) {
-      log.error("Path >>> "+ p.toString());
-    }
     // Pass two, build edges
     for (Path p : paths) {
-      log.error("Path "+ p.toString());
       //for (PathNode pn : p.path) {
       for (int i = 0; i < p.path.size(); ++i) {
         if (p.path.get(i).edge) {

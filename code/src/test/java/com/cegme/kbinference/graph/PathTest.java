@@ -21,7 +21,6 @@ public class PathTest {
     log.info("--->" + testPath1 + " " + path1.toString());
     assertEquals("The test path is the same ", testPath1, path1.toString());
 
-
     String testPath2 = "[Fox News:170612, calls the election for:1ULNP-InO-mEnA, McCain:33452, did n't have:2Fa2F-8Hy-C8e, a plan:171604]";
     Path path2 = Path.buildPath(testPath2, 0.5);
     log.info("--->" + testPath2 + " " + path2.toString());
@@ -46,7 +45,6 @@ public class PathTest {
     Path path6 = Path.buildPath(testPath6, 0.5);
     log.info("--->" + testPath6 + " " + path6.toString());
     assertEquals("The test path is the same ", testPath6, path6.toString());
-    
   }
 
 }

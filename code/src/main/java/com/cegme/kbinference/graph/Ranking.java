@@ -79,7 +79,7 @@ public class Ranking {
     }
 
     for (int i = 0; i < paths.size(); ++i) {
-      paths.get(i).conf = scoreVectors.get(i).score();
+      paths.get(i).setConf(scoreVectors.get(i).score());
     }
     
     return paths;
