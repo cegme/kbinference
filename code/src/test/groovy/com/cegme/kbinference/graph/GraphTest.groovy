@@ -46,7 +46,7 @@ public class GraphTest {
     }
 
     @AfterClass
-    static void afterClazz() throws Exception {
+    static void afterClass() throws Exception {
         graph.shutdown()
     }
 }

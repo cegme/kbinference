@@ -131,9 +131,24 @@ public class InferenceTest {
     }
 
     @Test
+    void testWeirdPath () {
+      def K = 3
+      //def khopVertices = graph.V('noun', 'Fox News')
+      //def khopVertices = graph.V('noun', 'N.C.').inE.outV
+      def khopVertices = graph.V('noun', 'CNN, Fox News').inE.outV
+                                .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"}
+
+      khopVertices.each {
+        System.err.println(">3> ${it}")
+      }
+      true
+    }
+
+    @Test
     void testKHopPath () {
       def K = 3
-      def khopVertices = graph.V('noun', 'Fox News')
+      //def khopVertices = graph.V('noun', 'Fox News')
+      def khopVertices = graph.V('noun', 'Obama')
                                 .outE  // Get the incoming and out going edges
                                 .inV
                                 .loop(K){it.loops < K}
@@ -173,8 +188,6 @@ public class InferenceTest {
         // Thanks google guava
         assertTrue("Are Vertices counted and serialized correctly ", Maps.difference(vertexmap, vertexmap2).areEqual())
         assertEquals("Is the extracted vertex count equal ", vertexmap.get("Obama"), vertexmap2.get("Obama"))
-        
-              
     }
 
 

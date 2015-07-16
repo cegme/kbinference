@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Path {
 
-  private ArrayList<PathNode> path;
-  private double conf;
+  public ArrayList<PathNode> path;
+  public double conf;
 
   public Path() {
     this(new ArrayList<PathNode>(), 0.0);
@@ -40,6 +40,10 @@ public class Path {
     path.add(new PathNode(term,id,edge));
   }
 
+  public PathNode get(int node) {
+    return path.get(node);
+  }
+
   public int size () {
     return path.size();
   }
@@ -51,7 +55,7 @@ public class Path {
     if (path.size() > 0) {
       sb.append(path.get(0).toString());
       for (int i = 1; i < path.size(); ++i) {
-        sb.append(", ");
+        sb.append(",");
         sb.append(path.get(i).toString());
       }
     }
@@ -71,7 +75,8 @@ public class Path {
   
     //final String pattern = "[\\[,]\\s*(\\w+):(\\w+)[\\]?]";
     //final String pattern = "[\\s\\-]*([\\w\\-\\s]+):([\\w\\-\\s]+)[\\s\\-]*";
-    final String pattern = "[\\s\\-]*([\\w\\-\\s']+):([\\w\\-\\s']+)[\\s\\-]*";
+    //final String pattern = "[\\s\\-]*([\\w\\-\\s']+):([\\w\\-\\s']+)[\\s\\-]*";
+    final String pattern = "([\\w\\-\\s']+):([\\w\\-\\s']+)";
     Matcher m = Pattern.compile(pattern).matcher(text);
 
     boolean isEdge = false;
@@ -99,14 +104,18 @@ public class Path {
       }
     }
 
+    for (Path p : paths) {
+      log.error("Path >>> "+ p.toString());
+    }
     // Pass two, build edges
     for (Path p : paths) {
+      log.error("Path "+ p.toString());
       //for (PathNode pn : p.path) {
       for (int i = 0; i < p.path.size(); ++i) {
         if (p.path.get(i).edge) {
           // NOTE: an edge is ALWAYS between two vertices
-          int src = nodeMap.get(p.path.get(i-1));
-          int dst = nodeMap.get(p.path.get(i+1));
+          int src = nodeMap.get(p.path.get(i-1).term);
+          int dst = nodeMap.get(p.path.get(i+1).term);
           sankey.addLink(src, dst, p.conf); 
         }
       }

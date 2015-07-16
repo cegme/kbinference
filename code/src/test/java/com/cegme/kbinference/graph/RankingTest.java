@@ -5,6 +5,9 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.cegme.kbinference.graph.Ranking;
 import com.cegme.kbinference.graph.GraphService;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.AfterClass;
@@ -32,6 +35,40 @@ public class RankingTest {
     double conf1 = Ranking.capitalLetters(test1);
     assertEquals("First test should return 7/5", 7.0/5, conf1, 0.001);
 
+  }
+
+
+  @Test
+  public void testRanking () {
+
+    log.debug("Loading the Graph.");    
+    TransactionalGraph graph = GraphService.loadDb();
+
+
+    log.debug("Building the path using the khop algorithm.");    
+    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "pot", 2); 
+
+    log.debug("Translating paths from string to objects.");
+    ArrayList<Path> paths = new ArrayList<Path>();
+    for (String p : stringPaths) {
+      paths.add(Path.buildPath(p, 0.5));
+    }
+
+    log.debug("Ranking the paths");
+    try { 
+      Ranking.RankPaths(graph, paths);
+    }
+    catch(IOException ioe) {
+      log.error("Error ranking the paths", ioe);
+    }
+    
+    log.debug("Creating a sankey diagram");
+    Sankey sankey = Path.toSankey(paths);
+    
+    log.debug("Printing the sankey json.");
+    System.out.println("\n" + sankey.toJson());
+
+    graph.shutdown();
   }
 
 

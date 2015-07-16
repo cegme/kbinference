@@ -14,6 +14,7 @@ import org.apache.commons.lang3.time.StopWatch
 
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit
 import java.util.Map;
@@ -22,12 +23,13 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.GZIPInputStream;
 
 @Slf4j
-@CompileStatic
+//@CompileStatic
 class GraphService {
     static Properties props = new Properties()
     static TitanGraph graph
 
     static {
+        Gremlin.load()
         props.load(GraphService.class.getResourceAsStream('/app.properties'))
         def path = props.getProperty('graphdb.path')
         graph = TitanFactory.open(path)
@@ -128,11 +130,12 @@ class GraphService {
 
       g.getEdges().each {
         Integer val = map.get(it.label);
+        String label = (String) it.label;
         if (val == null) {
-          map.put((String)it.label, 1);
+          map.put(label.trim(), 1);
         }
         else {
-          map.put((String)it.label, val+1);
+          map.put(label.trim(), val+1);
         }
       }
 
@@ -146,11 +149,12 @@ class GraphService {
 
       g.getVertices().each {
         Integer val = map.get(it.getProperty('noun'));
+        String noun = it.getProperty('noun')
         if (val == null) {
-          map.put((String)it.getProperty('noun'), 1);
+          map.put(noun.trim(), 1);
         }
         else {
-          map.put((String)it.getProperty('noun'), val+1);
+          map.put(noun.trim(), val+1);
         }
       }
 
@@ -176,8 +180,8 @@ class GraphService {
 
     }
 
-    static Map<String,Integer> deserializeCompressedMap(String location) {
-      TreeMap<String, Integer> map = null;
+    static java.util.Map<String,Integer> deserializeCompressedMap(String location) {
+      java.util.TreeMap<String, Integer> map = null;
       try
       {
         FileInputStream fis = new FileInputStream(location);
@@ -198,4 +202,26 @@ class GraphService {
         return map;
       }
     }
+
+    /**
+      * The map
+      */
+    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path) {
+
+      ArrayList<String> paths = new ArrayList<String>();
+
+      // Maybe convert it to the propertypes in the code
+      def khopVertices =
+        g.V('noun', 'Fox News')
+        .outE
+        .inV
+        .loop(max_path){it.loops < max_path}
+        .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"} 
+
+      khopVertices.each {
+        paths.add("" + "${it}")
+      }
+
+      return paths;
+    } 
 }
