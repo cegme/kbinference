@@ -55,7 +55,7 @@ public class Path {
     if (path.size() > 0) {
       sb.append(path.get(0).toString());
       for (int i = 1; i < path.size(); ++i) {
-        sb.append(", ");
+        sb.append(",");
         sb.append(path.get(i).toString());
       }
     }
