@@ -110,8 +110,6 @@ public class InferenceTest {
       // where v2 ~ v2'
       // Notice two edges may be connected if they are not approximatley equal
       // I think this is not directly doable in this framework. 
-      // FIXME Im not sure where to put comments with annotations
-      // TODO How can I filter??
       def twohopVertices = graph.V('noun', 'Fox News')
                                 .outE  // Get the incoming and out going edges
                                 .inV

@@ -217,6 +217,7 @@ class GraphService {
         .inV
         .random(sample)
         .loop(max_path){it.loops < max_path}
+        .filter{ (dst == null)?true:it.noun==dst}
         .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"} 
 
       khopVertices.each {

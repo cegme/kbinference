@@ -23,16 +23,21 @@ public class Sankey {
     public int source;
     public int target;
     public double value;
-    public Edge(int source, int target, double value) {
+    public String edge;
+
+    public Edge(int source, int target, double value, String edge) {
       this.source = source;
       this.target = target;
       this.value = value;
+      this.edge = edge;
     }
     public int compareTo(Edge o){
       int first = source - o.source;
       int second = target - o.target;
-      int third = Double.compare(value, o.value);
-      return (first != 0)?first : (second != 0)? second : third;
+      //int third = Double.compare(value, o.value);
+      //int forth = edge.compareTo(o.edge);
+      //return (first != 0)?first : (second != 0)? second : (third != 0)?third : forth;
+      return (first != 0)?first : second;
     }
   }
 
@@ -41,8 +46,8 @@ public class Sankey {
     links = new ArrayList<Edge>();
   }
   
-  public void addLink(int source, int target, double value) {
-    links.add(new Edge(source, target, value));
+  public void addLink(int source, int target, double value, String edge) {
+    links.add(new Edge(source, target, value, edge));
   }
   public void addNode(String name) {
     nodes.add(new Vertex(name));
@@ -70,6 +75,7 @@ public class Sankey {
     for (int i = 1; i < links.size(); ++i) {
       if(links.get(i-1).compareTo(links.get(i)) == 0) {
         newlinks.get(newcounter).value += links.get(i).value;
+        newlinks.get(newcounter).edge = newlinks.get(newcounter).edge + "\n" + links.get(i).edge;
       }
       else {
         newlinks.add(links.get(i));

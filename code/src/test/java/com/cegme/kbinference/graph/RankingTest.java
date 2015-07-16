@@ -55,7 +55,9 @@ public class RankingTest {
 
 
     log.info("Building the path using the khop algorithm.");    
-    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "pot", 3, 0.01); 
+    //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.1); 
+    //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", null, 3, 0.008); 
+    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 4, 0.1); 
 
     log.info("Translating paths from string to objects.");
     ArrayList<Path> paths = new ArrayList<Path>();

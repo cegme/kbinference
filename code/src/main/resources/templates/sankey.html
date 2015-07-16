@@ -31,7 +31,7 @@
 </style>
 </head>
 <body>
-  <p id="chart"i/>
+  <p id="chart"/>
 </body>
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -48,8 +48,8 @@ var margin = {top: 1, right: 1, bottom: 6, left: 1},
     //width = 960 - margin.left - margin.right,
     //height = 500 - margin.top - margin.bottom;
 
-var formatNumber = d3.format(",.0f"),
-    format = function(d) { return formatNumber(d) + " TWh"; },
+var formatNumber = d3.format(",.5f"),
+    format = function(d) { return formatNumber(d) + ""; },
     color = d3.scale.category20();
 
 var svg = d3.select("#chart").append("svg")
@@ -81,7 +81,7 @@ sankey
       .sort(function(a, b) { return b.dy - a.dy; });
 
   link.append("title")
-      .text(function(d) { return d.source.name + " → " + d.target.name + "\n" + format(d.value); });
+      .text(function(d) { return d.source.name + "\n→ " + d.edge + "\n→ " + d.target.name + "\n" + format(d.value); });
 
   var node = svg.append("g").selectAll(".node")
       .data(energy.nodes)

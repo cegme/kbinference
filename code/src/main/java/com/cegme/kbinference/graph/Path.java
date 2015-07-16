@@ -156,7 +156,7 @@ public class Path {
           // NOTE: an edge is ALWAYS between two vertices
           int src = nodeMap.get(p.path.get(i-1).term);
           int dst = nodeMap.get(p.path.get(i+1).term);
-          sankey.addLink(src, dst, p.conf); 
+          sankey.addLink(src, dst, p.conf, p.path.get(i).term); 
         }
       }
     }
