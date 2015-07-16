@@ -15,7 +15,7 @@ class SankeyBuilder {
   static Properties props = new Properties();
 
   
-  static String buildPage(String jsonString) {
+  static String buildPage(String jsonString, ArrayList<Path> paths) {
 
     props.load(SankeyBuilder.class.getResourceAsStream('/app.properties'));
     def templateReader = new BufferedReader(new InputStreamReader(SankeyBuilder.class.getResourceAsStream('/templates/sankey.html'), Charsets.UTF_8))
@@ -36,11 +36,31 @@ class SankeyBuilder {
     }
     def sankeyString = sb.toString()
 
+    def dynatablejsReader = new BufferedReader(new InputStreamReader(SankeyBuilder.class.getResourceAsStream('/templates/jquery.dynatable.js'), Charsets.UTF_8))
+    sb.setLength(0)
+    while ((line = dynatablejsReader.readLine()) != null) {
+      sb.append(line);
+      sb.append("\n")
+    }
+    def dynatablejsString = sb.toString()
+
+    def dynatablecssReader = new BufferedReader(new InputStreamReader(SankeyBuilder.class.getResourceAsStream('/templates/jquery.dynatable.css'), Charsets.UTF_8))
+    sb.setLength(0)
+    while ((line = dynatablecssReader.readLine()) != null) {
+      sb.append(line);
+      sb.append("\n")
+    }
+    def dynatablecssString = sb.toString()
+
+
 
     def template = new groovy.text.StreamingTemplateEngine().createTemplate(templateText);
     def binding = [
       myjsondata : jsonString,
-      sankeyjs : sankeyString
+      sankeyjs : sankeyString,
+      dynatablecss : dynatablecssString,
+      dynatablejs : dynatablejsString,
+      pathjson : Path.toJson(paths)
     ]
 
     String response = template.make(binding);

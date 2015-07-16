@@ -68,6 +68,25 @@ public class Path {
     return sb.toString();
   }
 
+  public String json () {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{");
+    sb.append("\"path\" : \"");
+    if (path.size() > 0) {
+        sb.append(path.get(0).term);
+        for (int i = 1; i < path.size(); ++i) {
+          sb.append(",");
+          sb.append(path.get(i).term);
+        }
+      }
+    sb.append("\", ");
+    sb.append("\"conf\" : \"");
+    sb.append(conf);
+    sb.append("\"}");
+
+    return sb.toString();
+  }
+
   /**
     * Takes a path string and creates a path object.
     *
@@ -131,6 +150,23 @@ public class Path {
     path.setConf(conf);
 
     return path; 
+  }
+
+  public static String toJson(ArrayList<Path> paths) {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("[\n");
+      if (paths.size() > 0) {
+        sb.append("\t");
+        sb.append(paths.get(0).json());
+      }
+      for (int i = 1; i < paths.size(); ++i) {
+        sb.append(",\n\t");
+        sb.append(paths.get(i).json());
+      }
+    sb.append("\n]");
+
+    return sb.toString();
   }
 
   public static Sankey toSankey(ArrayList<Path> paths) {

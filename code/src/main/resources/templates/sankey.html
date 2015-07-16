@@ -4,8 +4,12 @@
 <meta charset="utf-8">
 <title></title>
 <style>
+#toppaths {
+}
+
 #chart {
   height: 500px;
+  float: left;
 }
 
 .node rect {
@@ -29,15 +33,40 @@
   stroke-opacity: .5;
 }
 </style>
+<style>
+${dynatablecss}
+</style>
 </head>
 <body>
-  <p id="chart"/>
+  <div id="chart"/>
+
+  <div style="clear:both">
+  <hr/>
+
+  <h2>Top paths</h2>
+
+  <table id="toppaths">
+    <thead>
+      <th>Path</th>
+      <th>conf</th>
+    <thead>
+    <tbody>
+    </tbody>
+  </table>
+  <hr/>
+
 </body>
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 <script>
+${dynatablejs}
+</script>
+<script>
 ${sankeyjs}
+</script>
+<script>
+var pathjson = ${pathjson};
 </script>
 <script>
 var myenergy = ${myjsondata};
@@ -119,6 +148,14 @@ sankey
   }
 }) ();
 </script>
+<script>
+$('#toppaths').dynatable({
+  dataset: {
+    records : pathjson
+  }
+});
+</script>
+
 </html>
 
 
