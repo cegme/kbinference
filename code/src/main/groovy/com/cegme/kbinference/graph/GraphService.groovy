@@ -132,10 +132,10 @@ class GraphService {
         Integer val = map.get(it.label);
         String label = (String) it.label;
         if (val == null) {
-          map.put(label.trim(), 1);
+          map.put(label, 1);
         }
         else {
-          map.put(label.trim(), val+1);
+          map.put(label, val+1);
         }
       }
 
@@ -151,10 +151,10 @@ class GraphService {
         Integer val = map.get(it.getProperty('noun'));
         String noun = it.getProperty('noun')
         if (val == null) {
-          map.put(noun.trim(), 1);
+          map.put(noun, 1);
         }
         else {
-          map.put(noun.trim(), val+1);
+          map.put(noun, val+1);
         }
       }
 

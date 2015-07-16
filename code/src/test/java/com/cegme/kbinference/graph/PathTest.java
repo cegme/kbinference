@@ -37,6 +37,11 @@ public class PathTest {
     log.info("--->" + testPath5 + " " + path5.toString());
     assertEquals("The test path is the same ", testPath5, path5.toString());
 
+    String testPath6 = "[Obama:17792,  is expected to win in:2RTj1-4CY-7YRw, N.C.:4852948]";
+    Path path6 = Path.buildPath(testPath6, 0.5);
+    log.info("--->" + testPath6 + " " + path6.toString());
+    assertEquals("The test path is the same ", testPath6, path6.toString());
+
     String testPath4 = "[CNN, Fox News:2010680, has been featured on:1KlNz-dfta-3U9M, Entertainment Drive:3157732]";
     Path path4 = Path.buildPath(testPath4, 0.5);
     log.info("--->" + testPath4 + " " + path4.toString());

@@ -55,7 +55,7 @@ public class Path {
     if (path.size() > 0) {
       sb.append(path.get(0).toString());
       for (int i = 1; i < path.size(); ++i) {
-        sb.append(",");
+        sb.append(", ");
         sb.append(path.get(i).toString());
       }
     }
@@ -69,14 +69,17 @@ public class Path {
     *
     * input: " [Fox News:170612, calls the election for:1ULNP-InO-mEnA, McCain:33452, may do well in:2FcbL-8Hy-Sa2, NH:1369296]"
     * output: path object
+    * @deprecated use the {@link #buildPath} method.
     */
-  public static Path buildPath(String text, double conf) {
+  @Deprecated
+  public static Path oldBuildPath(String text, double conf) {
     Path path = new Path();
   
     //final String pattern = "[\\[,]\\s*(\\w+):(\\w+)[\\]?]";
     //final String pattern = "[\\s\\-]*([\\w\\-\\s]+):([\\w\\-\\s]+)[\\s\\-]*";
     //final String pattern = "[\\s\\-]*([\\w\\-\\s']+):([\\w\\-\\s']+)[\\s\\-]*";
-    final String pattern = "([\\w\\-\\s']+):([\\w\\-\\s']+)";
+    final String pattern =
+      "([\\w\\-\\s'\\.]+):([\\w\\-\\s']+)";
     Matcher m = Pattern.compile(pattern).matcher(text);
 
     boolean isEdge = false;
@@ -87,6 +90,47 @@ public class Path {
     path.conf = conf;
 
     return path;
+  }
+
+  public static Path buildPath(String text, double conf) {
+    log.info("buildPath " + text);
+    Path path = new Path();
+    StringBuilder sb = new StringBuilder();
+
+    String term = "", id = "";
+    boolean isEdge = false;
+    boolean lookingForId = false;
+
+    for (int i = 1; i < text.length()-1; ++i) {
+      char token = text.charAt(i);
+      if (!lookingForId && token != ':') {
+        sb.append(token);
+      }
+      else if (!lookingForId && token == ':') {
+        lookingForId ^= true;
+        term = sb.toString();
+        sb.setLength(0); // Reset buffer
+      }
+      else if (lookingForId && token != ',') {
+        sb.append(token);
+      }
+      else if (lookingForId && token == ',') {
+        lookingForId ^= true;
+        id = sb.toString();
+        sb.setLength(0); // Reset buffer
+        path.addPathNode(term, id, isEdge);
+        log.info("PathNode: " + term + ":" + id + "--" + isEdge);
+        isEdge ^= true;
+      }
+    }
+
+    // Add the leffover if
+    path.addPathNode(term, sb.toString(), isEdge);
+    log.info("PathNode: " + term + ":" + sb.toString() + "--" + isEdge);
+    path.conf = conf;
+
+    return path; 
+
   }
 
   public static Sankey toSankey(ArrayList<Path> paths) {
