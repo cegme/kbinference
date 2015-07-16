@@ -4,6 +4,7 @@ package com.cegme.kbinference.graph;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -18,7 +19,7 @@ public class Sankey {
     }
   }
 
-  class Edge {
+  class Edge implements Comparable<Edge>{
     public int source;
     public int target;
     public double value;
@@ -26,6 +27,12 @@ public class Sankey {
       this.source = source;
       this.target = target;
       this.value = value;
+    }
+    public int compareTo(Edge o){
+      int first = source - o.source;
+      int second = target - o.target;
+      int third = Double.compare(value, o.value);
+      return (first != 0)?first : (second != 0)? second : third;
     }
   }
 
@@ -42,16 +49,36 @@ public class Sankey {
   }
 
   public String toJson() {
+    compressDuplicates();
+
     Gson gson = new Gson();
-    //try {
-      return gson.toJson(this);
-    /*}
-    catch  (IOException ioe) {
-      log.error("Could not properly serialize to json", ioe);
+    return gson.toJson(this);
+  }
+
+  public void compressDuplicates () {
+    log.info("Compressing Duplicates");
+    // Assume the edges are sorted and adjacent
+    Collections.sort(links);
+
+    ArrayList<Edge> newlinks = new ArrayList<Edge>();
+    
+    if (links.size() > 0) {
+      newlinks.add(links.get(0));
     }
-    finally {
-      return "{}";
-    }*/
+    int dups = 0;
+    int newcounter = 0;
+    for (int i = 1; i < links.size(); ++i) {
+      if(links.get(i-1).compareTo(links.get(i)) == 0) {
+        newlinks.get(newcounter).value += links.get(i).value;
+      }
+      else {
+        newlinks.add(links.get(i));
+        ++newcounter;
+      }
+    }
+    
+    links = newlinks;
+
   }
 
 }
