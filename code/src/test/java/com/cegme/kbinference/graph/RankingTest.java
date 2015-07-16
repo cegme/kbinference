@@ -7,6 +7,7 @@ import com.cegme.kbinference.graph.GraphService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,21 +41,29 @@ public class RankingTest {
 
   @Test
   public void testRanking () {
+    
+    Properties props = new Properties();
+    try {
+      props.load(Ranking.class.getResourceAsStream("/app.properties"));
+    }
+    catch (IOException ioe) {
+      log.error("Error loading the properties page", ioe);
+    }
 
-    log.debug("Loading the Graph.");    
+    log.info("Loading the Graph.");    
     TransactionalGraph graph = GraphService.loadDb();
 
 
-    log.debug("Building the path using the khop algorithm.");    
-    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "pot", 2); 
+    log.info("Building the path using the khop algorithm.");    
+    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "pot", 3, 0.01); 
 
-    log.debug("Translating paths from string to objects.");
+    log.info("Translating paths from string to objects.");
     ArrayList<Path> paths = new ArrayList<Path>();
     for (String p : stringPaths) {
       paths.add(Path.buildPath(p, 0.5));
     }
 
-    log.debug("Ranking the paths");
+    log.info("Ranking the paths");
     try { 
       Ranking.RankPaths(graph, paths);
     }
@@ -62,11 +71,15 @@ public class RankingTest {
       log.error("Error ranking the paths", ioe);
     }
     
-    log.debug("Creating a sankey diagram");
+    log.info("Creating a sankey diagram");
     Sankey sankey = Path.toSankey(paths);
     
-    log.debug("Printing the sankey json.");
+    log.info("Printing the sankey json.");
     System.out.println("\n" + sankey.toJson());
+
+    log.info("Writing the page");
+    String page = SankeyBuilder.buildPage(sankey.toJson());
+    SankeyBuilder.writePage(page, props.getProperty("sankeyout.file"));
 
     graph.shutdown();
   }

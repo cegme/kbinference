@@ -57,14 +57,18 @@ public class Ranking {
       for (int j = 0; j < paths.get(i).size(); ++j) {
         String term = paths.get(i).get(j).term.trim();
 
-        if (paths.get(i).get(j).edge) {
-          log.error("------> " + term + " " + i + " " + j + paths.get(i).toString());
-          gidf += Math.ceil(1 / Math.log(globalEdgeMap.get(term)));
-          ridf += Math.ceil(1 / Math.log(localEdgeMap.get(term)));
+        try {
+          if (paths.get(i).get(j).edge) {
+            gidf += Math.ceil(1 / Math.log(globalEdgeMap.get(term)));
+            ridf += Math.ceil(1 / Math.log(localEdgeMap.get(term)));
+          }
+          else {
+            gidf += Math.ceil(1 / Math.log(globalNodeMap.get(term)));
+            ridf += Math.ceil(1 / Math.log(localNodeMap.get(term)));
+          }
         }
-        else {
-          gidf += Math.ceil(1 / Math.log(globalNodeMap.get(term)));
-          ridf += Math.ceil(1 / Math.log(localNodeMap.get(term)));
+        catch (java.lang.NullPointerException npe) {
+          log.error("term '%s' had an exception".format(term), npe);
         }
 
        int localWordcount = term.split("[\\s']+").length;
@@ -85,6 +89,9 @@ public class Ranking {
     return paths;
   }
  
+  // TODO 
+  // XXX
+  // Do not pass by reference.
   public static void GetLocalStats(Map<String,Integer> localEdgeMap, Map<String,Integer> localNodeMap, ArrayList<Path> paths) {
     // Get local stats 
     for (int i = 0; i < paths.size(); ++i) {

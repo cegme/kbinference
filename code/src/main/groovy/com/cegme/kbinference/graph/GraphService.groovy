@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -126,7 +126,7 @@ class GraphService {
     static Map<String,Integer> relationHistogram (TransactionalGraph g) {
       // Get all the edges and create a map of the countes
 
-      def map = new TreeMap<String,Integer>();
+      def map = new HashMap<String,Integer>();
 
       g.getEdges().each {
         Integer val = map.get(it.label);
@@ -145,7 +145,7 @@ class GraphService {
     static Map<String,Integer> entityHistogram (TransactionalGraph g) {
       // Get all the vertices
 
-      def map = new TreeMap<String,Integer>();
+      def map = new HashMap<String,Integer>();
 
       g.getVertices().each {
         Integer val = map.get(it.getProperty('noun'));
@@ -181,13 +181,13 @@ class GraphService {
     }
 
     static java.util.Map<String,Integer> deserializeCompressedMap(String location) {
-      java.util.TreeMap<String, Integer> map = null;
+      java.util.HashMap<String, Integer> map = null;
       try
       {
         FileInputStream fis = new FileInputStream(location);
         GZIPInputStream gzis = new GZIPInputStream(fis);
         ObjectInputStream ois = new ObjectInputStream(gzis);
-        map = (TreeMap) ois.readObject();
+        map = (HashMap) ois.readObject();
         ois.close();
         gzis.close();
         fis.close();
@@ -206,15 +206,16 @@ class GraphService {
     /**
       * The map
       */
-    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path) {
+    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path, double sample) {
 
       ArrayList<String> paths = new ArrayList<String>();
 
       // Maybe convert it to the propertypes in the code
       def khopVertices =
-        g.V('noun', 'Fox News')
+        g.V('noun', src)
         .outE
         .inV
+        .random(sample)
         .loop(max_path){it.loops < max_path}
         .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"} 
 
