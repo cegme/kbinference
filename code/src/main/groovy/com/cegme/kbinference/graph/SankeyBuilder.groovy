@@ -64,7 +64,7 @@ class SankeyBuilder {
     ]
 
     String response = template.make(binding);
-    log.info("Response page: " + response);
+    //log.info("Response page: " + response);
 
     return response;
   }

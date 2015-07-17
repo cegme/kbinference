@@ -55,7 +55,8 @@ public class RankingTest {
 
 
     log.info("Building the path using the khop algorithm.");    
-    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.1); 
+    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.9); 
+    //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.5); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", null, 3, 0.008); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 4, 0.1); 
 
@@ -77,7 +78,7 @@ public class RankingTest {
     Sankey sankey = Path.toSankey(paths);
     
     log.info("Printing the sankey json.");
-    System.out.println("\n" + sankey.toJson());
+    //System.out.println("\n" + sankey.toJson());
 
     log.info("Writing the page");
     String page = SankeyBuilder.buildPage(sankey.toJson(), paths);

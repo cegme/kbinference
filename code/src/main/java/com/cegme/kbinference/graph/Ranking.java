@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Ranking {
 
 
-  public static ArrayList<Path> RankPaths(TransactionalGraph g, ArrayList<Path> paths) throws IOException{
+  public static ArrayList<Path> RankPaths(TransactionalGraph g, ArrayList<Path> paths) throws IOException {
 
     ArrayList<ScoreVector> scoreVectors = new ArrayList<ScoreVector>(paths.size());
     for (int i = 0; i < paths.size(); ++i) {
@@ -42,8 +42,15 @@ public class Ranking {
     // Get the local counts
     Map<String,Integer> localEdgeMap = new TreeMap<String,Integer>();
     Map<String,Integer> localNodeMap = new TreeMap<String,Integer>();
-    GetLocalStats(localEdgeMap, localNodeMap, paths);
+    Pair<Map<String,Integer>, Map<String,Integer>> t = GetLocalStats(localEdgeMap, localNodeMap, paths);
+    localEdgeMap = t.left;
+    localNodeMap = t.right;
 
+    double max_g = 0.0;
+    double max_r = 0.0;
+    double max_pcl = 0.0;
+    double max_pl = 0.0;
+    //double max_
 
     // Count within the result paths
     for (int i = 0; i < paths.size(); ++i) {
@@ -59,40 +66,49 @@ public class Ranking {
 
         try {
           if (paths.get(i).get(j).edge) {
-            gidf += Math.ceil(1 / Math.log(globalEdgeMap.get(term)));
-            ridf += Math.ceil(1 / Math.log(localEdgeMap.get(term)));
+            max_g = Math.max(max_g, globalEdgeMap.get(term));
+            max_r = Math.max(max_r, localEdgeMap.get(term));
+
+            gidf += globalEdgeMap.get(term);
+            ridf += localEdgeMap.get(term);
           }
           else {
-            gidf += Math.ceil(1 / Math.log(globalNodeMap.get(term)));
-            ridf += Math.ceil(1 / Math.log(localNodeMap.get(term)));
+            max_g = Math.max(max_g, globalNodeMap.get(term));
+            max_r = Math.max(max_r, localNodeMap.get(term));
+
+            gidf += globalNodeMap.get(term);
+            ridf += localNodeMap.get(term);
           }
         }
         catch (java.lang.NullPointerException npe) {
-          log.error("term '%s' had an exception".format(term), npe);
+          log.error("term '" + term + "' had an exception ", npe);
         }
 
        int localWordcount = term.split("[\\s']+").length;
         wordcount += localWordcount;
         pcl += Ranking.capitalLetters(term)/localWordcount;
       }
-      scoreVectors.get(i).pathLength = paths.get(i).size();
+      //scoreVectors.get(i).pathLength = paths.get(i).size();
+      scoreVectors.get(i).pathLength = 1;
 
-      scoreVectors.get(i).globalIDF = gidf / scoreVectors.get(i).pathLength;
-      scoreVectors.get(i).resultIDF = ridf / scoreVectors.get(i).pathLength;
-      scoreVectors.get(i).pathCapitalLetters =  1.0*pcl / wordcount; 
+      scoreVectors.get(i).globalIDF = gidf / max_g;
+      scoreVectors.get(i).resultIDF = ridf / max_r;
+      scoreVectors.get(i).pathCapitalLetters =  pcl / wordcount; 
     }
 
     for (int i = 0; i < paths.size(); ++i) {
+      double oldconf = paths.get(i).getConf();
       paths.get(i).setConf(scoreVectors.get(i).score());
+      //log.info(paths.get(i).toString() + " " + paths.get(i).getConf());
+      //log.info(scoreVectors.get(i).toString());
+      assert(oldconf != paths.get(i).getConf());
     }
     
     return paths;
   }
  
-  // TODO 
-  // XXX
-  // Do not pass by reference.
-  public static void GetLocalStats(Map<String,Integer> localEdgeMap, Map<String,Integer> localNodeMap, ArrayList<Path> paths) {
+  public static Pair<Map<String,Integer>, Map<String,Integer>>
+  GetLocalStats(Map<String,Integer> localEdgeMap, Map<String,Integer> localNodeMap, ArrayList<Path> paths) {
     // Get local stats 
     for (int i = 0; i < paths.size(); ++i) {
       for (int j = 0; j < paths.get(i).size(); ++j) {
@@ -115,6 +131,8 @@ public class Ranking {
         }
       }
     }
+  
+    return new Pair<Map<String,Integer>,Map<String,Integer>>(localEdgeMap, localNodeMap);
   }
  
    /**

@@ -29,7 +29,14 @@ public class ScoreVector {
   }
 
   public double score() {
-    return (globalIDF + resultIDF + pathCapitalLetters + pathLength +  timeliness + noise()) / TOTAL;
+    double score = (globalIDF + resultIDF + pathCapitalLetters + pathLength +  timeliness + noise()) / TOTAL;
+    //return Math.min(1.0, Math.max(0.0, score));
+    //return Math.log(score);
+    return score;
+  }
+
+  public String toString () {
+    return globalIDF + " " + resultIDF + " " + pathCapitalLetters + " " + pathLength + " " + timeliness + " " + noise();
   }
 }
 

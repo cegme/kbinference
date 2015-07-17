@@ -48,8 +48,13 @@ public class Path {
     return path.size();
   }
 
+  public double getConf() {
+    return conf; 
+  }
+
   public void setConf(double conf) {
-    this.conf = Math.min(1.0,conf);
+    //this.conf = Math.min(1.0,conf);
+    this.conf = conf;
   }
 
   public String toString () {
