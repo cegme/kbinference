@@ -2,6 +2,7 @@
 package com.cegme.kbinference.graph;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Sankey {
   public ArrayList<Vertex> nodes;
   public ArrayList<Edge> links;
+  private Gson gson;
   
   class Vertex {
     public String name;
@@ -44,6 +46,10 @@ public class Sankey {
   public Sankey() {
     nodes = new ArrayList<Vertex>();
     links = new ArrayList<Edge>();
+    gson = new GsonBuilder()
+      .setPrettyPrinting()
+      .serializeSpecialFloatingPointValues()
+      .create();
   }
   
   public void addLink(int source, int target, double value, String edge) {
@@ -56,7 +62,6 @@ public class Sankey {
   public String toJson() {
     compressDuplicates();
 
-    Gson gson = new Gson();
     return gson.toJson(this);
   }
 

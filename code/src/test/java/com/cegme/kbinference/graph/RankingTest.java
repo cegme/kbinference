@@ -8,6 +8,8 @@ import com.cegme.kbinference.graph.GraphService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Set;
+import java.util.HashSet;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,12 +55,19 @@ public class RankingTest {
     log.info("Loading the Graph.");    
     TransactionalGraph graph = GraphService.loadDb();
 
+    Set<String> srcs = new HashSet<String>();
+      srcs.add("Hillary");
+      srcs.add("Palin");
+    Set<String> dsts = new HashSet<String>();
+      dsts.add("CNN");
+      dsts.add("Fox News");
 
     log.info("Building the path using the khop algorithm.");    
-    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.9); 
+    //ArrayList<String> stringPaths = GraphService.buildPath(graph, "marijuana", "Fox News", 3, 0.9); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.5); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", null, 3, 0.008); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 4, 0.1); 
+    ArrayList<String> stringPaths = GraphService.buildPath(graph, srcs, dsts, 3, 0.9); 
 
     log.info("Translating paths from string to objects.");
     ArrayList<Path> paths = new ArrayList<Path>();

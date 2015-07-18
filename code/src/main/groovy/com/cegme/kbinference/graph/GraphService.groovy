@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -203,10 +205,25 @@ class GraphService {
       }
     }
 
+
+    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path, double sample) {
+      Set<String> dsts = new HashSet<String>();
+      dsts.add(dst);
+      return GraphService.buildPath(g,src,dsts,max_path,sample);
+    }
+
+    static ArrayList<String> buildPath(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
+      ArrayList<String> paths = new ArrayList<String>();
+      for(String src : srcs) {
+        paths.addAll(GraphService.buildPath(g,src,dsts,max_path,sample));
+      }
+      return paths;
+    }
+    
     /**
       * The map
       */
-    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path, double sample) {
+    static ArrayList<String> buildPath(TransactionalGraph g, String src, Set<String> dsts, int max_path, double sample) {
 
       ArrayList<String> paths = new ArrayList<String>();
 
@@ -217,9 +234,10 @@ class GraphService {
         .inV
         .random(sample)
         .loop(max_path){it.loops < max_path}
-        .filter{ (dst == null)?true:it.noun==dst}
+        .filter{ (dsts == null)?true:dsts.contains(it.getProperty('noun')) }
+        //.filter{ (dst == null)?true:it.getProperty('noun')==dst}
         .simplePath
-        .path{(it.noun==null)?"${it.label}:${it.id}":"${it.noun}:${it.id}"} 
+        .path{(it.getProperty('noun')==null)?"${it.label}:${it.id}":"${it.getProperty('noun')}:${it.id}"} 
 
       khopVertices.each {
         paths.add("" + "${it}")
