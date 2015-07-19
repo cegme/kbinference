@@ -205,12 +205,18 @@ class GraphService {
       }
     }
 
-
-    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path, double sample) {
-      Set<String> dsts = new HashSet<String>();
-      dsts.add(dst);
-      return GraphService.buildPath(g,src,dsts,max_path,sample);
+    static ArrayList<String> buildPathMultiK(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
+      ArrayList<String> paths = new ArrayList<String>();
+      for(String src : srcs) {
+        for (int i = 2; i < max_path; ++i) {
+          log.info("buildPath " + (i+1));
+          //paths.addAll(GraphService.buildPath(g,src,dsts,max_path,sample));
+          paths.addAll(GraphService.buildPath(g,src,dsts,i+1,sample));
+        }
+      }
+      return paths;
     }
+ 
 
     static ArrayList<String> buildPath(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
       ArrayList<String> paths = new ArrayList<String>();
@@ -218,6 +224,12 @@ class GraphService {
         paths.addAll(GraphService.buildPath(g,src,dsts,max_path,sample));
       }
       return paths;
+    }
+    
+    static ArrayList<String> buildPath(TransactionalGraph g, String src, String dst, int max_path, double sample) {
+      Set<String> dsts = new HashSet<String>();
+      dsts.add(dst);
+      return GraphService.buildPath(g,src,dsts,max_path,sample);
     }
     
     /**

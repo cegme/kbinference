@@ -56,18 +56,21 @@ public class RankingTest {
     TransactionalGraph graph = GraphService.loadDb();
 
     Set<String> srcs = new HashSet<String>();
-      srcs.add("Hillary");
-      srcs.add("Palin");
+      //srcs.add("Hillary");
+      //srcs.add("Palin");
+      srcs.add("Marijuana");
+      //srcs.add("Pot");
     Set<String> dsts = new HashSet<String>();
       dsts.add("CNN");
       dsts.add("Fox News");
 
     log.info("Building the path using the khop algorithm.");    
-    //ArrayList<String> stringPaths = GraphService.buildPath(graph, "marijuana", "Fox News", 3, 0.9); 
+    ArrayList<String> stringPaths = GraphService.buildPath(graph, "Marijuana", "Fox News", 4, 0.9); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 3, 0.5); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", null, 3, 0.008); 
     //ArrayList<String> stringPaths = GraphService.buildPath(graph, "Obama", "Fox News", 4, 0.1); 
-    ArrayList<String> stringPaths = GraphService.buildPath(graph, srcs, dsts, 3, 0.9); 
+    //ArrayList<String> stringPaths = GraphService.buildPath(graph, srcs, dsts, 3, 0.9); 
+    //ArrayList<String> stringPaths = GraphService.buildPathMultiK(graph, srcs, dsts, 3, 0.9); 
 
     log.info("Translating paths from string to objects.");
     ArrayList<Path> paths = new ArrayList<Path>();
