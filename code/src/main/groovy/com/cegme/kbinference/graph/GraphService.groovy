@@ -16,7 +16,6 @@ import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -205,18 +204,6 @@ class GraphService {
       }
     }
 
-    static ArrayList<String> buildPathMultiK(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
-      ArrayList<String> paths = new ArrayList<String>();
-      for(String src : srcs) {
-        for (int i = 2; i < max_path; ++i) {
-          log.info("buildPath " + (i+1));
-          //paths.addAll(GraphService.buildPath(g,src,dsts,max_path,sample));
-          paths.addAll(GraphService.buildPath(g,src,dsts,i+1,sample));
-        }
-      }
-      return paths;
-    }
- 
 
     static ArrayList<String> buildPath(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
       ArrayList<String> paths = new ArrayList<String>();
@@ -257,4 +244,25 @@ class GraphService {
 
       return paths;
     } 
+
+    static ArrayList<String> buildPathMultiK(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
+      ArrayList<String> paths = new ArrayList<String>();
+      for(String src : srcs) {
+        for (int i = 2; i < max_path; ++i) {
+          log.info("buildPath " + (i+1));
+          //paths.addAll(GraphService.buildPath(g,src,dsts,max_path,sample));
+          paths.addAll(GraphService.buildPath(g,src,dsts,i+1,sample));
+        }
+      }
+      return paths;
+    }
+
+    static void buildPathNoSave(TransactionalGraph g, Set<String> srcs, Set<String> dsts, int max_path, double sample) {
+      for(String src : srcs) {
+        GraphService.buildPath(g,src,dsts,max_path,sample);
+      }
+    }
+
+
+
 }
